@@ -3,6 +3,7 @@ package com.bryghts.ftypes
 import com.bryghts.ftypes.async.Flattener
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.reflect.ClassTag
 
 
 case class BasicFlattener[T, FT <: async.Any[T, FT]](b:  ExecutionContext => Future[T] => FT) extends Flattener[FT] {
@@ -25,6 +26,6 @@ trait BasicFlatteners {
     implicit def implicitBooleanFlattener : Flattener[async.Boolean]    = BasicFlattener(implicit ec => async.Boolean.apply)
     implicit def implicitUnitFlattener    : Flattener[async.Unit]       = BasicFlattener(implicit ec => async.Unit.apply)
 
-    implicit def implicitArrayFlattener[T <: async.Any[_, _]]: Flattener[async.Array[T]] = BasicFlattener(implicit ec => async.Array.apply[T])
+    implicit def implicitArrayFlattener[T <: async.Any[_, _]](implicit flattener: Flattener[T]): Flattener[async.Array[T]] = BasicFlattener(implicit ec => async.Array.from[T])
 
 }

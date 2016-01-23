@@ -2,6 +2,7 @@ package com.bryghts.ftypes
 package async
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.reflect.ClassTag
 
 trait Flattener[T <: async.Any[_, _]] {
     def flatten(in: Future[T])(implicit executionContext: ExecutionContext): T
@@ -26,8 +27,10 @@ class Array[T <: async.Any[_, _]] private(override val future: Future[scala.Arra
 object Array // extends AnyCompanion[scala.Array[_], async.Array[_]]
 {
 
-    def apply[T](in: Future[scala.Array[T]])(implicit executionContext: ExecutionContext): Array[T] =
+    def from[T <: async.Any[_, _]](in: Future[scala.Array[T]])(implicit executionContext: ExecutionContext, flattener: Flattener[T]): async.Array[T] =
         new async.Array(in)
 
+    def apply[T <: async.Any[_, _]](values: T*)(implicit executionContext: ExecutionContext, flattener: Flattener[T], ct: ClassTag[T]): async.Array[T] =
+        from(Future.successful(values.toArray))
 }
 

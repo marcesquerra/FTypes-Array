@@ -4,14 +4,6 @@ import com.bryghts.ftypes._
 import utest._
 import utest.ExecutionContext.RunNow
 
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Awaitable}
-
-object FTypes extends ValExtensions
-                 with BasicFlatteners
-
-import FTypes._
-
 /**
  * Created by Marc Esquerrà on 23/01/2016.
  */
